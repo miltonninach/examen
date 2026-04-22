@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<a href="/create" class="btn btn-primary mb-3">Nueva Cita</a>
+
+<div class="row">
+    {% for cita in citas %}
+    <div class="col-md-4">
+        <div class="card mb-3 shadow">
+            <div class="card-body">
+                <h5 class="card-title">{{ cita.mascota }}</h5>
+                <p>Propietario: {{ cita.propietario }}</p>
+                <p>Especie: {{ cita.especie }}</p>
+                <p>Fecha: {{ cita.fecha }}</p>
+
+                <a href="/edit/{{ cita.id }}" class="btn btn-warning btn-sm">Editar</a>
+                <a href="/delete/{{ cita.id }}" class="btn btn-danger btn-sm">Eliminar</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

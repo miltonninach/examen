@@ -21,5 +21,44 @@ def init_db():
 
 init_db()
 
+@app.route('/')
+def index():
+    conn = sqlite3.connect('citas.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM pacientes")
+    citas = cursor.fetchall()
+
+    conn.close()
+    return render_template('index.html', citas=citas)
+
+
+@app.route('/create')
+def create():
+    return render_template('create.html')
+
+
+@app.route('/save', methods=['POST'])
+def save():
+    mascota = request.form['mascota']
+    propietario = request.form['propietario']
+    especie = request.form['especie']
+    fecha = request.form['fecha']
+
+    conn = sqlite3.connect('citas.db')
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO pacientes (mascota, propietario, especie, fecha)
+        VALUES (?, ?, ?, ?)
+    """, (mascota, propietario, especie, fecha))
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
