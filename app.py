@@ -58,6 +58,51 @@ def save():
     conn.close()
 
     return redirect('/')
+@app.route('/edit/<int:id>')
+def edit(id):
+    conn = sqlite3.connect('citas.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM pacientes WHERE id=?", (id,))
+    cita = cursor.fetchone()
+
+    conn.close()
+    return render_template('edit.html', cita=cita)
+
+@app.route('/update', methods=['POST'])
+def update():
+    id = request.form['id']
+    mascota = request.form['mascota']
+    propietario = request.form['propietario']
+    especie = request.form['especie']
+    fecha = request.form['fecha']
+
+    conn = sqlite3.connect('citas.db')
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE pacientes 
+        SET mascota=?, propietario=?, especie=?, fecha=? 
+        WHERE id=?
+    """, (mascota, propietario, especie, fecha, id))
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/')
+
+@app.route('/delete/<int:id>')
+def delete(id):
+    conn = sqlite3.connect('citas.db')
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM pacientes WHERE id=?", (id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/')
 
 
 if __name__ == '__main__':
